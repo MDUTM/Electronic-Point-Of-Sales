@@ -5,6 +5,7 @@
 #include "touch.h"
 #include "menuFrame.h"
 #include "foodFrame.h"
+#include "shopFrame.h"
 
 /* 全局变量 */
 Bmp *pic = nullptr;  // 图片
@@ -16,10 +17,11 @@ sem_t *menuFrameSem = nullptr; // 菜单窗口信号量
 sem_t *foodFrameSem = nullptr; // 食物窗口信号量
 sem_t *shopFrameSem = nullptr; // 购物车窗口信号量
 
-MenuFrame *MFrame = nullptr; // 菜单窗口
+MenuFrame *MFrame = nullptr;  // 菜单窗口
 FoodFrame *FFrameA = nullptr; // 食物窗口A
 FoodFrame *FFrameB = nullptr; // 食物窗口B
 FoodFrame *FFrameC = nullptr; // 食物窗口C
+ShopFrame *SFrame = nullptr;  // 购物车窗口
 
 void initData()
 {
@@ -40,6 +42,7 @@ void initData()
     FFrameA = new FoodFrame('a', 3);
     FFrameB = new FoodFrame('b', 2);
     FFrameC = new FoodFrame('c', 1);
+    SFrame = new ShopFrame();
 }
 
 void startThread()
@@ -47,6 +50,7 @@ void startThread()
     MFrame->start();
     FFrameA->setThreadStatus(true);
     FFrameA->start();
+    SFrame->start();
 }
 
 void printMain()
@@ -253,6 +257,55 @@ void FoodFrameTask()
                 std::cout << "4-" << std::endl;
                 continue;
             }
+        }
+    }
+}
+
+void ShopFrameTask()
+{
+    while (1)
+    {
+        // 等待触摸
+        sem_wait(shopFrameSem);
+        
+        if (4 <= p->Y() && p->Y() <= 44)
+        {
+            // 上一页
+            if (540 <= p->X() && p->X() <= 620)
+            {
+                std::cout << "上一页" << std::endl;
+                // 计算最大页数
+                // _pageMax = FV->size() / 4 + (FV->size() % 4 == 0 ? 0 : 1);
+                // std::cout << "pageMax: " << _pageMax << std::endl;
+                // if (_pageMax < 1)
+                //     continue;
+                // if (_pageMax != 1)
+                //     _page = --_page < 1 ? _pageMax : _page;
+                // std::cout << "shopPage: " << _page << std::endl;
+                // flushShopping();
+                continue;
+            }
+
+            // 下一页
+            if (716 <= p->X() && p->X() <= 796)
+            {
+                std::cout << "下一页" << std::endl;
+                // // 计算最大页数
+                // _pageMax = FV->size() / 4 + (FV->size() % 4 == 0 ? 0 : 1);
+                // std::cout << "pageMax: " << _pageMax << std::endl;
+                // if (_pageMax < 1)
+                //     continue;
+                // if (_pageMax != 1)
+                //     _page = ++_page > _pageMax ? 1 : _page;
+                // std::cout << "shopPage: " << _page << std::endl;
+                // flushShopping();
+                continue;
+            }
+        }
+
+        if (716 <= p->X() && p->X() <= 796 && 436 <= p->Y() && p->Y() <= 476) // 结算
+        {
+            std::cout << "结算" << std::endl;
         }
     }
 }

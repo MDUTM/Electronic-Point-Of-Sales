@@ -9,5 +9,6 @@ void printMain();
 
 void MenuFrameTask();
 void FoodFrameTask();
+void ShopFrameTask();
 
 #endif /* _CALLBACK_H */
