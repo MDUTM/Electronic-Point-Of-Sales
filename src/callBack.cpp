@@ -4,6 +4,7 @@
 #include "fontUtil.h"
 #include "touch.h"
 #include "menuFrame.h"
+#include "foodFrame.h"
 
 /* 全局变量 */
 Bmp *pic = nullptr;  // 图片
@@ -16,6 +17,9 @@ sem_t *foodFrameSem = nullptr; // 食物窗口信号量
 sem_t *shopFrameSem = nullptr; // 购物车窗口信号量
 
 MenuFrame *MFrame = nullptr; // 菜单窗口
+FoodFrame *FFrameA = nullptr; // 食物窗口A
+FoodFrame *FFrameB = nullptr; // 食物窗口B
+FoodFrame *FFrameC = nullptr; // 食物窗口C
 
 void initData()
 {
@@ -33,11 +37,16 @@ void initData()
     sem_init(shopFrameSem, 0, 0);
 
     MFrame = new MenuFrame();
+    FFrameA = new FoodFrame('a', 3);
+    FFrameB = new FoodFrame('b', 2);
+    FFrameC = new FoodFrame('c', 1);
 }
 
 void startThread()
 {
     MFrame->start();
+    FFrameA->setThreadStatus(true);
+    FFrameA->start();
 }
 
 void printMain()
@@ -118,6 +127,130 @@ void MenuFrameTask()
                 //     FMC->setThreadStatus(true);
                 //     FMC->start();
                 // }
+                continue;
+            }
+        }
+    }
+}
+
+void FoodFrameTask()
+{
+    while (1)
+    {
+        // 等待触摸
+        sem_wait(foodFrameSem);
+
+        // 点击事件
+        if (8 <= p->X() && p->X() <= 48) // 左
+        {
+            // 1 +
+            if (52 <= p->Y() && p->Y() <= 121)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_1", _tag, _page);
+                // operate(buf, addToShopping);
+                // delete[] buf;
+                std::cout << "1+" << std::endl;
+                continue;
+            }
+
+            // 1 -
+            if (128 <= p->Y() && p->Y() <= 197)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_1", _tag, _page);
+                // operate(buf, subToShopping);
+                // delete[] buf;
+                std::cout << "1-" << std::endl;
+                continue;
+            }
+
+            // 上一页
+            if (205 <= p->Y() && p->Y() <= 274)
+            {
+                // _page = --_page < 1 ? _pageMax : _page;
+                // std::cout << "page: " << _page << std::endl;
+                // operate(*this, displayCallBack);
+                std::cout << "up" << std::endl;
+                continue;
+            }
+
+            // 2 +
+            if (281 <= p->Y() && p->Y() <= 350)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_2", _tag, _page);
+                // operate(buf, addToShopping);
+                // delete[] buf;
+                std::cout << "2+" << std::endl;
+                continue;
+            }
+
+            // 2 -
+            if (357 <= p->Y() && p->Y() <= 426)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_2", _tag, _page);
+                // operate(buf, subToShopping);
+                // delete[] buf;
+                std::cout << "2-" << std::endl;
+                continue;
+            }
+        }
+
+        if (482 <= p->X() && p->X() <= 531) // 右
+        {
+            // 3 +
+            if (52 <= p->Y() && p->Y() <= 121)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_3", _tag, _page);
+                // operate(buf, addToShopping);
+                // delete[] buf;
+                std::cout << "3+" << std::endl;
+                continue;
+            }
+
+            // 3 -
+            if (128 <= p->Y() && p->Y() <= 197)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_3", _tag, _page);
+                // operate(buf, subToShopping);
+                // delete[] buf;
+                std::cout << "3-" << std::endl;
+                continue;
+            }
+
+            // 下一页
+            if (205 <= p->Y() && p->Y() <= 274)
+            {
+                // _page = ++_page > _pageMax ? 1 : _page;
+                // std::cout << "page: " << _page << std::endl;
+                // operate(*this, displayCallBack);
+                std::cout << "down" << std::endl;
+                continue;
+            }
+
+            // 4 +
+            if (281 <= p->Y() && p->Y() <= 350)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_4", _tag, _page);
+                // operate(buf, addToShopping);
+                // delete[] buf;
+                std::cout << "4+" << std::endl;
+                continue;
+            }
+
+            // 4 -
+            if (357 <= p->Y() && p->Y() <= 426)
+            {
+                // char *buf = new char[7]();
+                // sprintf(buf, "%c_%d_4", _tag, _page);
+                // operate(buf, subToShopping);
+                // delete[] buf;
+                std::cout << "4-" << std::endl;
                 continue;
             }
         }

@@ -8,5 +8,6 @@ void startThread();
 void printMain();
 
 void MenuFrameTask();
+void FoodFrameTask();
 
 #endif /* _CALLBACK_H */
