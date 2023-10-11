@@ -23,65 +23,6 @@ ShopFrame *SFrame = nullptr;  // 购物车窗口
 foodSet_t *FSet = nullptr;               // 食物集合
 std::vector<Food *> *shopCart = nullptr; // 记录已下单的食物
 
-//
-void flushShop2()
-{
-    if (shopCart->size() == 0)
-        return;
-
-    int no = shopCart->size() - 4;
-
-    pic->setBmp("res/ui/fontBg.bmp");
-    char *buf = new char[14]();
-
-    // 1
-    pic->display(547, 62);
-    sprintf(buf, "合计: %d", shopCart->at(4)->Count());
-    f30->show(shopCart->at(4)->Name(), 240, 30, 547, 70);
-    f30->show(std::string(buf), 240, 30, 547, 104);
-
-    // 2
-    if (no >= 2)
-    {
-        pic->display(547, 154);
-        memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(5)->Count());
-        f30->show(shopCart->at(5)->Name(), 240, 30, 547, 162);
-        f30->show(std::string(buf), 240, 30, 547, 196);
-    }
-
-    // 3
-    if (no >= 3)
-    {
-        pic->display(547, 246);
-        memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(6)->Count());
-        f30->show(shopCart->at(6)->Name(), 240, 30, 547, 254);
-        f30->show(std::string(buf), 240, 30, 547, 288);
-    }
-
-    // 4
-    if (no >= 4)
-    {
-        pic->display(547, 337);
-        memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(7)->Count());
-        f30->show(shopCart->at(7)->Name(), 240, 30, 547, 346);
-        f30->show(std::string(buf), 240, 30, 547, 380);
-    }
-
-    // 合计
-    double sum = 0;
-    for (auto &refVal : *shopCart)
-        sum += (refVal->Count() * refVal->Price());
-
-    memset(buf, 0, 14);
-    sprintf(buf, "合计:%.1lf", sum);
-    f30->show(std::string(buf), 170, 30, 540, 440);
-
-    delete[] buf;
-}
-
 void initData()
 {
     pic = new Bmp;
@@ -181,15 +122,16 @@ void flushShop()
     if (shopCart->size() == 0)
         return;
 
-    int no = shopCart->size();
+    int now = (SFrame->Page() - 1) * 4;
+    int no = shopCart->size() - now;
 
     pic->setBmp("res/ui/fontBg.bmp");
     char *buf = new char[14]();
 
     // 1
     pic->display(547, 62);
-    sprintf(buf, "合计: %d", shopCart->at(0)->Count());
-    f30->show(shopCart->at(0)->Name(), 240, 30, 547, 70);
+    sprintf(buf, "合计: %d", shopCart->at(now + 0)->Count());
+    f30->show(shopCart->at(now + 0)->Name(), 240, 30, 547, 70);
     f30->show(std::string(buf), 240, 30, 547, 104);
 
     // 2
@@ -197,8 +139,8 @@ void flushShop()
     {
         pic->display(547, 154);
         memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(1)->Count());
-        f30->show(shopCart->at(1)->Name(), 240, 30, 547, 162);
+        sprintf(buf, "合计: %d", shopCart->at(now + 1)->Count());
+        f30->show(shopCart->at(now + 1)->Name(), 240, 30, 547, 162);
         f30->show(std::string(buf), 240, 30, 547, 196);
     }
 
@@ -207,8 +149,8 @@ void flushShop()
     {
         pic->display(547, 246);
         memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(2)->Count());
-        f30->show(shopCart->at(2)->Name(), 240, 30, 547, 254);
+        sprintf(buf, "合计: %d", shopCart->at(now + 2)->Count());
+        f30->show(shopCart->at(now + 2)->Name(), 240, 30, 547, 254);
         f30->show(std::string(buf), 240, 30, 547, 288);
     }
 
@@ -217,8 +159,8 @@ void flushShop()
     {
         pic->display(547, 337);
         memset(buf, 0, 14);
-        sprintf(buf, "合计: %d", shopCart->at(3)->Count());
-        f30->show(shopCart->at(3)->Name(), 240, 30, 547, 346);
+        sprintf(buf, "合计: %d", shopCart->at(now + 3)->Count());
+        f30->show(shopCart->at(now + 3)->Name(), 240, 30, 547, 346);
         f30->show(std::string(buf), 240, 30, 547, 380);
     }
 
@@ -253,7 +195,8 @@ void eachShop()
         pic->display(543, 52);
     }
 
-    ;
+    SFrame->setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+    SFrame->flushPage();
 }
 
 void MenuFrameTask(MenuFrame &ra)
@@ -351,9 +294,7 @@ void FoodFrameTask(FoodFrame &ra)
             {
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_1", ra.Tag(), ra.Page());
-                // sprintf(buf, "%c_%d_1", _tag, _page);
-                // operate(buf, addToShopping);
-                // delete[] buf;
+
                 addJudgeFrame(bufTag);
                 std::cout << "1+" << std::endl;
                 delete[] bufTag;
@@ -363,10 +304,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 1 -
             if (128 <= p->Y() && p->Y() <= 197)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_1", _tag, _page);
-                // operate(buf, subToShopping);
-                // delete[] buf;
+
                 std::cout << "1-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_1", ra.Tag(), ra.Page());
@@ -378,12 +316,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 上一页
             if (205 <= p->Y() && p->Y() <= 274)
             {
-                // _page = --_page < 1 ? _pageMax : _page;
-                // std::cout << "page: " << _page << std::endl;
-                // operate(*this, displayCallBack);
-                // std::cout << "up" << std::endl;
                 ra.subPage();
-                // std::cout << "page: " << ra.Page() << std::endl;
                 printFrameToScreen(ra);
                 continue;
             }
@@ -391,10 +324,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 2 +
             if (281 <= p->Y() && p->Y() <= 350)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_2", _tag, _page);
-                // operate(buf, addToShopping);
-                // delete[] buf;
                 std::cout << "2+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_2", ra.Tag(), ra.Page());
@@ -406,10 +335,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 2 -
             if (357 <= p->Y() && p->Y() <= 426)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_2", _tag, _page);
-                // operate(buf, subToShopping);
-                // delete[] buf;
                 std::cout << "2-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_2", ra.Tag(), ra.Page());
@@ -424,10 +349,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 3 +
             if (52 <= p->Y() && p->Y() <= 121)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_3", _tag, _page);
-                // operate(buf, addToShopping);
-                // delete[] buf;
                 std::cout << "3+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_3", ra.Tag(), ra.Page());
@@ -439,10 +360,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 3 -
             if (128 <= p->Y() && p->Y() <= 197)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_3", _tag, _page);
-                // operate(buf, subToShopping);
-                // delete[] buf;
                 std::cout << "3-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_3", ra.Tag(), ra.Page());
@@ -454,12 +371,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 下一页
             if (205 <= p->Y() && p->Y() <= 274)
             {
-                // _page = ++_page > _pageMax ? 1 : _page;
-                // std::cout << "page: " << _page << std::endl;
-                // operate(*this, displayCallBack);
-                // std::cout << "down" << std::endl;
                 ra.addPage();
-                // std::cout << "page: " << ra.Page() << std::endl;
                 printFrameToScreen(ra);
                 continue;
             }
@@ -467,10 +379,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 4 +
             if (281 <= p->Y() && p->Y() <= 350)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_4", _tag, _page);
-                // operate(buf, addToShopping);
-                // delete[] buf;
                 std::cout << "4+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_4", ra.Tag(), ra.Page());
@@ -482,10 +390,6 @@ void FoodFrameTask(FoodFrame &ra)
             // 4 -
             if (357 <= p->Y() && p->Y() <= 426)
             {
-                // char *buf = new char[7]();
-                // sprintf(buf, "%c_%d_4", _tag, _page);
-                // operate(buf, subToShopping);
-                // delete[] buf;
                 std::cout << "4-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_4", ra.Tag(), ra.Page());
@@ -510,14 +414,16 @@ void ShopFrameTask(ShopFrame &ra)
             if (540 <= p->X() && p->X() <= 620)
             {
                 std::cout << "上一页" << std::endl;
-                // 计算最大页数
-                // _pageMax = FV->size() / 4 + (FV->size() % 4 == 0 ? 0 : 1);
-                // std::cout << "pageMax: " << _pageMax << std::endl;
-                // if (_pageMax < 1)
-                //     continue;
-                // if (_pageMax != 1)
-                //     _page = --_page < 1 ? _pageMax : _page;
-                // std::cout << "shopPage: " << _page << std::endl;
+                ra.setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+                if (ra.PageMax() <= 1)
+                    continue;
+
+                ra.subPage();
+
+                // 清空购物车页面
+                pic->setBmp("res/ui/bgClear.bmp");
+                pic->display(543, 52);
+
                 flushShop();
                 continue;
             }
@@ -526,16 +432,18 @@ void ShopFrameTask(ShopFrame &ra)
             if (716 <= p->X() && p->X() <= 796)
             {
                 std::cout << "下一页" << std::endl;
-                // // 计算最大页数
-                // _pageMax = FV->size() / 4 + (FV->size() % 4 == 0 ? 0 : 1);
-                // std::cout << "pageMax: " << _pageMax << std::endl;
-                // if (_pageMax < 1)
-                //     continue;
-                // if (_pageMax != 1)
-                //     _page = ++_page > _pageMax ? 1 : _page;
-                // std::cout << "shopPage: " << _page << std::endl;
-                // flushShopping();
-                flushShop2();
+                ra.setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+                if (ra.PageMax() <= 1)
+                    continue;
+
+
+                ra.addPage();
+
+                // 清空购物车页面
+                pic->setBmp("res/ui/bgClear.bmp");
+                pic->display(543, 52);
+
+                flushShop();
                 continue;
             }
         }
@@ -708,6 +616,11 @@ void addToShopA(char *tag)
     }
 
 flushTag:
+    SFrame->setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+    SFrame->flushPage();
+    // 清空购物车页面
+    pic->setBmp("res/ui/bgClear.bmp");
+    pic->display(543, 52);
     flushShop();
 }
 
@@ -780,6 +693,12 @@ void addToShopB(char *tag)
     }
 
 flushTag:
+    SFrame->setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+    SFrame->flushPage();
+
+    // 清空购物车页面
+    pic->setBmp("res/ui/bgClear.bmp");
+    pic->display(543, 52);
     flushShop();
 }
 
@@ -827,6 +746,12 @@ void addToShopC(char *tag)
     }
 
 flushTag:
+    SFrame->setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
+    SFrame->flushPage();
+
+    // 清空购物车页面
+    pic->setBmp("res/ui/bgClear.bmp");
+    pic->display(543, 52);
     flushShop();
 }
 

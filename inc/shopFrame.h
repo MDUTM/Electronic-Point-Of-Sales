@@ -16,6 +16,7 @@ public:
     int Page();
     int PageMax();
     void setPageMax(int pageMax);
+    void flushPage();
 };
 
 #endif /* _SHOPFRAME_H */

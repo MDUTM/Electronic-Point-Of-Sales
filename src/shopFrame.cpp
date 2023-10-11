@@ -39,3 +39,11 @@ void ShopFrame::setPageMax(int pageMax)
 {
     _pageMax = pageMax;
 }
+
+void ShopFrame::flushPage()
+{
+    if (!_pageMax)
+        _page = 1;
+    else
+        _page = _pageMax;
+}
