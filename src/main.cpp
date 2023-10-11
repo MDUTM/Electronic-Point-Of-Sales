@@ -5,6 +5,8 @@
 
 using namespace std;
 
+std::string *tableNo = nullptr;
+
 extern Touch *ts; // 触摸
 extern Point *p;  // 坐标
 
@@ -14,6 +16,14 @@ extern sem_t *shopFrameSem; // 购物车窗口信号量
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 2)
+    {
+        std::cerr << "请指定桌号!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    tableNo = new std::string(argv[1]);
+
     // 初始化
     initData();
 
@@ -22,7 +32,7 @@ int main(int argc, char const *argv[])
 
     // 启动线程
     startThread();
-    
+
     // 触摸
     while (1)
     {

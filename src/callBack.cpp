@@ -5,6 +5,7 @@
 #include "touch.h"
 
 /* 全局变量 */
+double sumPrice = 0;
 Bmp *pic = nullptr;  // 图片
 Font *f30 = nullptr; // 30px字体
 Touch *ts = nullptr; // 触摸
@@ -22,6 +23,10 @@ ShopFrame *SFrame = nullptr;  // 购物车窗口
 
 foodSet_t *FSet = nullptr;               // 食物集合
 std::vector<Food *> *shopCart = nullptr; // 记录已下单的食物
+
+extern std::string *tableNo; // 桌号
+
+bool isActivity = true;
 
 void initData()
 {
@@ -90,10 +95,37 @@ void startThread()
     SFrame->start();
 }
 
+void stopThread()
+{
+    if (FFrameA->ThreadStatus())
+    {
+        FFrameA->setThreadStatus(false);
+        FFrameA->stop();
+    }
+    if (FFrameB->ThreadStatus())
+    {
+        FFrameB->setThreadStatus(false);
+        FFrameB->stop();
+    }
+    if (FFrameC->ThreadStatus())
+    {
+        FFrameC->setThreadStatus(false);
+        FFrameC->stop();
+    }
+
+    MFrame->stop();
+}
+
 void printMain()
 {
     pic->setBmp("res/ui/main.bmp");
     pic->display();
+
+    char *info = new char[24 + tableNo->length()]();
+    sprintf(info, "桌号:%s 请开始点餐", tableNo->data());
+
+    f30->show(std::string(info), 428, 30, 104, 9);
+    delete[] info;
 }
 
 void printFrameToScreen(FoodFrame &ra)
@@ -165,12 +197,12 @@ void flushShop()
     }
 
     // 合计
-    double sum = 0;
+    sumPrice = 0;
     for (auto &refVal : *shopCart)
-        sum += (refVal->Count() * refVal->Price());
+        sumPrice += (refVal->Count() * refVal->Price());
 
     memset(buf, 0, 14);
-    sprintf(buf, "合计:%.1lf", sum);
+    sprintf(buf, "合计:%.1lf", sumPrice);
     f30->show(std::string(buf), 170, 30, 540, 440);
 
     delete[] buf;
@@ -211,7 +243,7 @@ void MenuFrameTask(MenuFrame &ra)
             // A类
             if (4 <= p->X() && p->X() <= 154)
             {
-                std::cout << "A" << std::endl;
+                // std::cout << "A" << std::endl;
                 if (!FFrameA->ThreadStatus())
                 {
                     FFrameA->setThreadStatus(true);
@@ -233,7 +265,7 @@ void MenuFrameTask(MenuFrame &ra)
             // B类
             if (195 <= p->X() && p->X() <= 345)
             {
-                std::cout << "B" << std::endl;
+                // std::cout << "B" << std::endl;
                 if (FFrameA->ThreadStatus())
                 {
                     FFrameA->setThreadStatus(false);
@@ -255,7 +287,7 @@ void MenuFrameTask(MenuFrame &ra)
             // C类
             if (386 <= p->X() && p->X() <= 536)
             {
-                std::cout << "C" << std::endl;
+                // std::cout << "C" << std::endl;
                 if (FFrameA->ThreadStatus())
                 {
                     FFrameA->setThreadStatus(false);
@@ -296,7 +328,7 @@ void FoodFrameTask(FoodFrame &ra)
                 sprintf(bufTag, "%c_%d_1", ra.Tag(), ra.Page());
 
                 addJudgeFrame(bufTag);
-                std::cout << "1+" << std::endl;
+                // std::cout << "1+" << std::endl;
                 delete[] bufTag;
                 continue;
             }
@@ -305,7 +337,7 @@ void FoodFrameTask(FoodFrame &ra)
             if (128 <= p->Y() && p->Y() <= 197)
             {
 
-                std::cout << "1-" << std::endl;
+                // std::cout << "1-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_1", ra.Tag(), ra.Page());
                 subJudgeFrame(bufTag);
@@ -324,7 +356,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 2 +
             if (281 <= p->Y() && p->Y() <= 350)
             {
-                std::cout << "2+" << std::endl;
+                // std::cout << "2+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_2", ra.Tag(), ra.Page());
                 addJudgeFrame(bufTag);
@@ -335,7 +367,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 2 -
             if (357 <= p->Y() && p->Y() <= 426)
             {
-                std::cout << "2-" << std::endl;
+                // std::cout << "2-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_2", ra.Tag(), ra.Page());
                 subJudgeFrame(bufTag);
@@ -349,7 +381,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 3 +
             if (52 <= p->Y() && p->Y() <= 121)
             {
-                std::cout << "3+" << std::endl;
+                // std::cout << "3+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_3", ra.Tag(), ra.Page());
                 addJudgeFrame(bufTag);
@@ -360,7 +392,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 3 -
             if (128 <= p->Y() && p->Y() <= 197)
             {
-                std::cout << "3-" << std::endl;
+                // std::cout << "3-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_3", ra.Tag(), ra.Page());
                 subJudgeFrame(bufTag);
@@ -379,7 +411,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 4 +
             if (281 <= p->Y() && p->Y() <= 350)
             {
-                std::cout << "4+" << std::endl;
+                // std::cout << "4+" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_4", ra.Tag(), ra.Page());
                 addJudgeFrame(bufTag);
@@ -390,7 +422,7 @@ void FoodFrameTask(FoodFrame &ra)
             // 4 -
             if (357 <= p->Y() && p->Y() <= 426)
             {
-                std::cout << "4-" << std::endl;
+                // std::cout << "4-" << std::endl;
                 char *bufTag = new char[7]();
                 sprintf(bufTag, "%c_%d_4", ra.Tag(), ra.Page());
                 subJudgeFrame(bufTag);
@@ -413,7 +445,7 @@ void ShopFrameTask(ShopFrame &ra)
             // 上一页
             if (540 <= p->X() && p->X() <= 620)
             {
-                std::cout << "上一页" << std::endl;
+                // std::cout << "上一页" << std::endl;
                 ra.setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
                 if (ra.PageMax() <= 1)
                     continue;
@@ -431,11 +463,10 @@ void ShopFrameTask(ShopFrame &ra)
             // 下一页
             if (716 <= p->X() && p->X() <= 796)
             {
-                std::cout << "下一页" << std::endl;
+                // std::cout << "下一页" << std::endl;
                 ra.setPageMax(shopCart->size() / 4 + (shopCart->size() % 4 == 0 ? 0 : 1));
                 if (ra.PageMax() <= 1)
                     continue;
-
 
                 ra.addPage();
 
@@ -448,11 +479,12 @@ void ShopFrameTask(ShopFrame &ra)
             }
         }
 
-        if (716 <= p->X() && p->X() <= 796 && 436 <= p->Y() && p->Y() <= 476) // 结算
-        {
-            std::cout << "结算" << std::endl;
-            pay();
-        }
+        if (isActivity)
+            if (716 <= p->X() && p->X() <= 796 && 436 <= p->Y() && p->Y() <= 476) // 结算
+            {
+                std::cout << "结算" << std::endl;
+                pay();
+            }
     }
 }
 
@@ -983,7 +1015,27 @@ void frameC(int page)
 
 void pay()
 {
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "桌号", tableNo->data());
     for (auto &ra : *shopCart)
-        std::cout << ra->Name() << " X " << ra->Count() << std::endl;
-    std::cout << std::endl;
+        cJSON_AddNumberToObject(root, ra->Name().data(), ra->Count());
+    cJSON_AddNumberToObject(root, "总价", sumPrice);
+
+    std::cout << cJSON_Print(root) << std::endl;
+
+    // 向服务器发送数据
+    Udp *client = new Udp(std::string("192.168.2.253"));
+    client->sendMsg(std::string(cJSON_Print(root)), "192.168.2.35");
+
+    cJSON_Delete(root);
+    delete[] client;
+
+    stopThread();
+    isActivity = false;
+
+    // "桌号: 已成功下单 祝您用餐愉快" //43
+    char *info = new char[43 + tableNo->length()]();
+    sprintf(info, "桌号:%s成功下单 祝您用餐愉快", tableNo->data());
+    f30->show(std::string(info), 432, 30, 104, 9);
+    delete[] info;
 }

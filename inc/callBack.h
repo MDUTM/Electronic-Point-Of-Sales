@@ -2,6 +2,7 @@
 #define _CALLBACK_H 1
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include <semaphore.h>
 
@@ -9,9 +10,12 @@
 #include "foodFrame.h"
 #include "menuFrame.h"
 #include "shopFrame.h"
+#include "JsonUtil.h"
+#include "udp.h"
 
 void initData();
 void startThread();
+void stopThread();
 void printMain();
 
 void printFrameToScreen(FoodFrame &ra);
