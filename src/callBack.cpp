@@ -23,6 +23,65 @@ ShopFrame *SFrame = nullptr;  // 购物车窗口
 foodSet_t *FSet = nullptr;               // 食物集合
 std::vector<Food *> *shopCart = nullptr; // 记录已下单的食物
 
+//
+void flushShop2()
+{
+    if (shopCart->size() == 0)
+        return;
+
+    int no = shopCart->size() - 4;
+
+    pic->setBmp("res/ui/fontBg.bmp");
+    char *buf = new char[14]();
+
+    // 1
+    pic->display(547, 62);
+    sprintf(buf, "合计: %d", shopCart->at(4)->Count());
+    f30->show(shopCart->at(4)->Name(), 240, 30, 547, 70);
+    f30->show(std::string(buf), 240, 30, 547, 104);
+
+    // 2
+    if (no >= 2)
+    {
+        pic->display(547, 154);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(5)->Count());
+        f30->show(shopCart->at(5)->Name(), 240, 30, 547, 162);
+        f30->show(std::string(buf), 240, 30, 547, 196);
+    }
+
+    // 3
+    if (no >= 3)
+    {
+        pic->display(547, 246);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(6)->Count());
+        f30->show(shopCart->at(6)->Name(), 240, 30, 547, 254);
+        f30->show(std::string(buf), 240, 30, 547, 288);
+    }
+
+    // 4
+    if (no >= 4)
+    {
+        pic->display(547, 337);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(7)->Count());
+        f30->show(shopCart->at(7)->Name(), 240, 30, 547, 346);
+        f30->show(std::string(buf), 240, 30, 547, 380);
+    }
+
+    // 合计
+    double sum = 0;
+    for (auto &refVal : *shopCart)
+        sum += (refVal->Count() * refVal->Price());
+
+    memset(buf, 0, 14);
+    sprintf(buf, "合计:%.1lf", sum);
+    f30->show(std::string(buf), 170, 30, 540, 440);
+
+    delete[] buf;
+}
+
 void initData()
 {
     pic = new Bmp;
@@ -193,6 +252,8 @@ void eachShop()
         pic->setBmp("res/ui/bgClear.bmp");
         pic->display(543, 52);
     }
+
+    ;
 }
 
 void MenuFrameTask(MenuFrame &ra)
@@ -457,7 +518,7 @@ void ShopFrameTask(ShopFrame &ra)
                 // if (_pageMax != 1)
                 //     _page = --_page < 1 ? _pageMax : _page;
                 // std::cout << "shopPage: " << _page << std::endl;
-                // flushShopping();
+                flushShop();
                 continue;
             }
 
@@ -474,6 +535,7 @@ void ShopFrameTask(ShopFrame &ra)
                 //     _page = ++_page > _pageMax ? 1 : _page;
                 // std::cout << "shopPage: " << _page << std::endl;
                 // flushShopping();
+                flushShop2();
                 continue;
             }
         }

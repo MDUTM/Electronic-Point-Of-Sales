@@ -5,9 +5,17 @@
 
 class ShopFrame : public Thread
 {
+    int _page;
+    int _pageMax;
 public:
     ShopFrame();
     void run();
+
+    void addPage();
+    void subPage();
+    int Page();
+    int PageMax();
+    void setPageMax(int pageMax);
 };
 
 #endif /* _SHOPFRAME_H */
