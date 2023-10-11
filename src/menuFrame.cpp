@@ -1,8 +1,8 @@
 #include "menuFrame.h"
 
-extern void MenuFrameTask();
+extern void MenuFrameTask(MenuFrame &ra);
 
 void MenuFrame::run()
 {
-    MenuFrameTask();
+    MenuFrameTask(*this);
 }

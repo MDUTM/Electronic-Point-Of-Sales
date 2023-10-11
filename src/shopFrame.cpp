@@ -1,6 +1,6 @@
 #include "shopFrame.h"
 
-extern void ShopFrameTask();
+extern void ShopFrameTask(ShopFrame &ra);
 
 ShopFrame::ShopFrame()
 {
@@ -9,5 +9,5 @@ ShopFrame::ShopFrame()
 
 void ShopFrame::run()
 {
-    ShopFrameTask();
+    ShopFrameTask(*this);
 }

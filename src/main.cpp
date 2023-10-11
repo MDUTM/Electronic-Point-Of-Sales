@@ -17,12 +17,12 @@ int main(int argc, char const *argv[])
     // 初始化
     initData();
 
-    // 启动线程
-    startThread();
-
     // 主界面
     printMain();
 
+    // 启动线程
+    startThread();
+    
     // 触摸
     while (1)
     {
@@ -38,6 +38,6 @@ int main(int argc, char const *argv[])
             exit(EXIT_SUCCESS);
         }
     }
-    
+
     return 0;
 }

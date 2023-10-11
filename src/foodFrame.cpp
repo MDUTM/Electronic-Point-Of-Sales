@@ -1,6 +1,6 @@
 #include "foodFrame.h"
 
-extern void FoodFrameTask();
+extern void FoodFrameTask(FoodFrame &ra);
 
 FoodFrame::FoodFrame(char tag, int pageMax)
 {
@@ -30,7 +30,17 @@ char FoodFrame::Tag()
     return _tag;
 }
 
+void FoodFrame::subPage()
+{
+    _page = --_page < 1 ? _pageMax : _page;
+}
+
+void FoodFrame::addPage()
+{
+    _page = ++_page > _pageMax ? 1 : _page;
+}
+
 void FoodFrame::run()
 {
-    FoodFrameTask();
+    FoodFrameTask(*this);
 }

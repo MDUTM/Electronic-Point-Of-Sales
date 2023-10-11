@@ -18,6 +18,9 @@ public:
     int Page();
     char Tag();
 
+    void subPage();
+    void addPage();
+
     void run();
 };
 
