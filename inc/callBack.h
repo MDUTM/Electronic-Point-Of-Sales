@@ -14,7 +14,9 @@ void initData();
 void startThread();
 void printMain();
 
-void printToScreen(FoodFrame &ra);
+void printFrameToScreen(FoodFrame &ra);
+void flushShop();
+void eachShop();
 
 void MenuFrameTask(MenuFrame &ra);
 void FoodFrameTask(FoodFrame &ra);

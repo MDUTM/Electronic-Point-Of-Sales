@@ -96,7 +96,7 @@ void printMain()
     pic->display();
 }
 
-void printToScreen(FoodFrame &ra)
+void printFrameToScreen(FoodFrame &ra)
 {
     switch (ra.Tag())
     {
@@ -111,9 +111,87 @@ void printToScreen(FoodFrame &ra)
     case 'c':
         frameC(ra.Page());
         break;
-    
+
     default:
         break;
+    }
+}
+
+void flushShop()
+{
+    if (shopCart->size() == 0)
+        return;
+
+    int no = shopCart->size();
+
+    pic->setBmp("res/ui/fontBg.bmp");
+    char *buf = new char[14]();
+
+    // 1
+    pic->display(547, 62);
+    sprintf(buf, "合计: %d", shopCart->at(0)->Count());
+    f30->show(shopCart->at(0)->Name(), 240, 30, 547, 70);
+    f30->show(std::string(buf), 240, 30, 547, 104);
+
+    // 2
+    if (no >= 2)
+    {
+        pic->display(547, 154);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(1)->Count());
+        f30->show(shopCart->at(1)->Name(), 240, 30, 547, 162);
+        f30->show(std::string(buf), 240, 30, 547, 196);
+    }
+
+    // 3
+    if (no >= 3)
+    {
+        pic->display(547, 246);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(2)->Count());
+        f30->show(shopCart->at(2)->Name(), 240, 30, 547, 254);
+        f30->show(std::string(buf), 240, 30, 547, 288);
+    }
+
+    // 4
+    if (no >= 4)
+    {
+        pic->display(547, 337);
+        memset(buf, 0, 14);
+        sprintf(buf, "合计: %d", shopCart->at(3)->Count());
+        f30->show(shopCart->at(3)->Name(), 240, 30, 547, 346);
+        f30->show(std::string(buf), 240, 30, 547, 380);
+    }
+
+    // 合计
+    double sum = 0;
+    for (auto &refVal : *shopCart)
+        sum += (refVal->Count() * refVal->Price());
+
+    memset(buf, 0, 14);
+    sprintf(buf, "合计:%.1lf", sum);
+    f30->show(std::string(buf), 170, 30, 540, 440);
+
+    delete[] buf;
+}
+
+void eachShop()
+{
+    bool isFlush = false;
+
+    for (auto it = shopCart->begin(); it != shopCart->end(); it++)
+        if ((*it)->Count() == 0)
+        {
+            shopCart->erase(it);
+            isFlush = true;
+            break;
+        }
+
+    if (isFlush)
+    {
+        // 清空购物车页面
+        pic->setBmp("res/ui/bgClear.bmp");
+        pic->display(543, 52);
     }
 }
 
@@ -197,7 +275,7 @@ void MenuFrameTask(MenuFrame &ra)
 
 void FoodFrameTask(FoodFrame &ra)
 {
-    printToScreen(ra);
+    printFrameToScreen(ra);
 
     while (1)
     {
@@ -245,7 +323,7 @@ void FoodFrameTask(FoodFrame &ra)
                 // std::cout << "up" << std::endl;
                 ra.subPage();
                 // std::cout << "page: " << ra.Page() << std::endl;
-                printToScreen(ra);
+                printFrameToScreen(ra);
                 continue;
             }
 
@@ -321,7 +399,7 @@ void FoodFrameTask(FoodFrame &ra)
                 // std::cout << "down" << std::endl;
                 ra.addPage();
                 // std::cout << "page: " << ra.Page() << std::endl;
-                printToScreen(ra);
+                printFrameToScreen(ra);
                 continue;
             }
 
@@ -567,7 +645,8 @@ void addToShopA(char *tag)
         goto flushTag;
     }
 
-flushTag:;
+flushTag:
+    flushShop();
 }
 
 void addToShopB(char *tag)
@@ -638,7 +717,8 @@ void addToShopB(char *tag)
         goto flushTag;
     }
 
-flushTag:;
+flushTag:
+    flushShop();
 }
 
 void addToShopC(char *tag)
@@ -684,7 +764,8 @@ void addToShopC(char *tag)
         goto flushTag;
     }
 
-flushTag:;
+flushTag:
+    flushShop();
 }
 
 void subToShopA(char *tag)
@@ -764,7 +845,9 @@ void subToShopA(char *tag)
         goto flushTag;
     }
 
-flushTag:;
+flushTag:
+    eachShop();
+    flushShop();
 }
 
 void subToShopB(char *tag)
@@ -819,7 +902,9 @@ void subToShopB(char *tag)
         goto flushTag;
     }
 
-flushTag:;
+flushTag:
+    eachShop();
+    flushShop();
 }
 
 void subToShopC(char *tag)
@@ -847,7 +932,9 @@ void subToShopC(char *tag)
         FSet->c_1_4->subCount();
         goto flushTag;
     }
-flushTag:;
+flushTag:
+    eachShop();
+    flushShop();
 }
 
 void frameA(int page)
