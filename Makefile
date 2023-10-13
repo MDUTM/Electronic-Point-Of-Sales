@@ -1,6 +1,6 @@
-BIN_DIR = build
-INC_DIR = inc
-SRC_DIR = src
+BIN_DIR = build/
+INC_DIR = inc/
+SRC_DIR = src/
 
 CXX = g++
 ARM = arm-linux-g++
@@ -19,13 +19,13 @@ create_dir:
 	mkdir -p $(BIN_DIR)
 
 main: $(addprefix $(SRC_DIR)/,$(MAIN_SOURCE))
-	$(ARM) $(addprefix $(SRC_DIR)/,$(MAIN_SOURCE)) -o $(BIN_DIR)/main -I $(INC_DIR) $(CXXFLAGS) $(LIB)
+	$(ARM) $^ -o $(BIN_DIR)$@ -I $(INC_DIR) $(CXXFLAGS) $(LIB)
 
-epos: $(addprefix $(SRC_DIR)/,$(EPOS_SOURCE))
-	$(ARM) $(addprefix $(SRC_DIR)/,$(EPOS_SOURCE)) -o $(BIN_DIR)/epos -I $(INC_DIR) $(CXXFLAGS) $(LIB)
+epos: $(addprefix $(SRC_DIR), $(EPOS_SOURCE))
+	$(ARM) $^ -o $(BIN_DIR)$@ -I $(INC_DIR) $(CXXFLAGS) $(LIB)
 
-server: $(addprefix $(SRC_DIR)/,$(SERVER_SOURCE))
-	$(CXX) $(addprefix $(SRC_DIR)/,$(SERVER_SOURCE)) -o $(BIN_DIR)/server -I $(INC_DIR) $(CXXFLAGS) $(LIB)
+server: $(addprefix $(SRC_DIR), $(SERVER_SOURCE))
+	$(CXX) $^ -o $(BIN_DIR)$@ -I $(INC_DIR) $(CXXFLAGS) $(LIB)
 
 .PHONY: clean
 clean:
